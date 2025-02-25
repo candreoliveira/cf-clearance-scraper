@@ -9,12 +9,13 @@ const reqValidate = require('./module/reqValidate')
 global.browserLength = 0
 global.browserLimit = Number(process.env.browserLimit) || 20
 global.timeOut = Number(process.env.timeOut || 60000)
+let server;
 
 app.use(bodyParser.json({}))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
-if (process.env.NODE_ENV !== 'development') {
-    let server = app.listen(port, () => { console.log(`Server running on port ${port}`) })
+if (process.env.NODE_ENV !== 'development' || process.env.FORCE_CF_CLEARANCE_LISTEN == 'true') {
+    server = app.listen(port, () => { console.log(`Server running on port ${port}`) })
     try {
         server.timeout = global.timeOut
     } catch (e) { }
@@ -67,4 +68,7 @@ app.post('/cf-clearance-scraper', async (req, res) => {
 
 app.use((req, res) => { res.status(404).json({ code: 404, message: 'Not Found' }) })
 
-if (process.env.NODE_ENV == 'development') module.exports = app
+if (process.env.NODE_ENV == 'development' || process.env.FORCE_CF_CLEARANCE_LISTEN == 'true') { 
+    module.exports = { app, server };
+    module.exports.default = app;
+}
