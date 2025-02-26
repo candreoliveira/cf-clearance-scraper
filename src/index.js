@@ -15,7 +15,7 @@ app.use(bodyParser.json({}))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 if (process.env.NODE_ENV !== 'development' || process.env.FORCE_CF_CLEARANCE_LISTEN == 'true') {
-    server = app.listen(port, () => { console.log(`Server running on port ${port}`) })
+    server = app.listen(port, '0.0.0.0', () => { console.log(`Server running on port ${port}`) })
     try {
         server.timeout = global.timeOut
     } catch (e) { }
